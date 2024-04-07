@@ -1,4 +1,6 @@
 {% extends 'flatpages/default.html' %}
+{% load i18n %}
+{% load tz %} <!-- не забываем загрузить тег для работы с часовыми поясами -->
 
 {% load custom_filters %}
 
@@ -9,56 +11,88 @@ Posts
 {% endblock title %}
 
 {% block content %}
-    <h1>Все публикации</h1>
+    {% trans "Найти" as search %}
+    <form action="{% url 'set_language' %}" method="POST"> {% csrf_token %} <!-- Не забываем по csrf_token
+    для POST запросов -->
+        <input type="hidden" name="next" value="{{ redirect_to }}">
+        {% get_current_language as LANGUAGE_CODE %}
+        <select name="language" id="">
+            {% get_available_languages as LANGUAGES %} <!-- получаем языки -->
+            {% get_language_info_list for LANGUAGES as languages %} <!-- Помещаем их в список languages -->
+            {% for language in languages %} <!-- Итерируясь по списку, выводим их название на языке пользователя и код -->
+                <option value="{{ language.code }}" {% if language.code == LANGUAGE_CODE %} selected {% endif %}>
+                    {{ language.name_local }} - {{ language.code }}
+                </option>
+            {% endfor %}
+        </select>>
+        <input type="submit" value="set">
+    </form>
+
+    {% get_current_timezone as TIME_ZONE %}
+    <form action="" method="POST">
+        {% csrf_token %}
+        <label for="timezone">Time zone:</label>
+        <select name="timezone">
+            {% for tz in timezones %}
+            <option value="{{ tz }}"{% if tz == TIME_ZONE %} selected{% endif %}>{{ tz }}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" value="Set">
+    </form>
+
+    {{ TIME_ZONE }}
+    {{ current_time|timezone:TIME_ZONE }} <!-- Отображаем время в выбранном часовом поясе  -->
+
+    <h1>{% trans "Все публикации" %}</h1>
     <h3>{{ time_now|date:'d M Y' }}</h3>
     <h3> {{ posts|length }} </h3>
     <form action="" method="get">
         {{ filterset.form.as_p }}
-        <input type="submit" value="Найти" />
+        <input type="submit" value="{{ search }}" />
     </form>
 
     <hr>
     <!-- D5 -->
     {% if perms.news.add_post %}
-    <a href="{% url 'news_create' %}">Добавить новость</a>
+    <a href="{% url 'news_create' %}">{% trans "Добавить новость" %}</a>
     {% endif %}
     {% if perms.news.add_post %}
-    <a href="{% url 'article_create' %}">Добавить статью</a>
+    <a href="{% url 'article_create' %}">{% trans "Добавить статью" %}</a>
     {% endif %}
 
     {% if posts %}
         <table>
             <tr>
-                <td>Заголовок</td>
-                <td>Дата публикации</td>
-                <td>Содержание</td>
+                <td>{% trans "Заголовок" %}</td>
+                <td>{% trans "Дата публикации" %}</td>
+                <td>{% trans "Содержание" %}</td>
                 <!-- D5 -->
                 {% if perms.news.change_post or perms.news.delete_post %}
-                <td>Действия</td>
+                <td>{% trans "Действия" %}</td>
                 {% endif %}
 
             </tr>
 
             {% for post in posts %}
             <tr>
-                <td>{{ post.title }}</td>
+                <td><a href="{% url 'post_detail' pk=post.id %}">{{ post.title }}</a></td>
                 <td>{{ post.time_in|date:'d M Y h i s' }}</td>
                 <td>{{ post.text|truncatechars:20|censor }}</td>
                 <!-- D5 -->
                 <td>
                     {% if post.category_post == "NE" %}
                         {% if perms.news.change_post %}
-                            <a href="{% url 'news_edit' pk=post.id %}">Изменить</a>
+                            <a href="{% url 'news_edit' pk=post.id %}">{% trans "Изменить" %}</a>
                         {% endif %}
                         {% if perms.news.delete_post %}
-                            <a href="{% url 'news_delete' post.id %}">Удалить</a>
+                            <a href="{% url 'news_delete' post.id %}">{% trans "Удалить" %}</a>
                         {% endif %}
                     {% else %}
                         {% if perms.news.change_post %}
-                            <a href="{% url 'article_edit' pk=post.id %}">Изменить</a>
+                            <a href="{% url 'article_edit' pk=post.id %}">{% trans "Изменить" %}</a>
                         {% endif %}
                         {% if perms.news.delete_post %}
-                            <a href="{% url 'article_delete' post.id %}">Удалить</a>
+                            <a href="{% url 'article_delete' post.id %}">{% trans "Удалить" %}</a>
                         {% endif %}
                     {% endif %}
                 </td>

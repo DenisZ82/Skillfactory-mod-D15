@@ -1,18 +1,21 @@
 {% extends 'flatpages/default.html' %}
 
 {% load custom_filters %}
+{% load cache %}
 
 {% block title %}
 Search
 {% endblock title %}
 
 {% block content %}
-    <h1>Поиск публикаций</h1>
-    <h3>{{ time_now|date:'d M Y' }}</h3>
-    <form action="" method="get">
-        {{ filterset.form.as_p }}
-        <input type="submit" value="Найти" />
-    </form>
+    {% cache 30 search %}
+        <h1>Поиск публикаций</h1>
+        <h3>{{ time_now|date:'d M Y' }}</h3>
+        <form action="" method="get">
+            {{ filterset.form.as_p }}
+            <input type="submit" value="Найти" />
+        </form>
+    {% endcache %}
     <hr>
     {% if posts %}
         <table>
@@ -21,6 +24,7 @@ Search
                 <td>Дата публикации</td>
                 <td>Содержание</td>
             </tr>
+            {% cache 30 list_fr %}
             {% for post in posts %}
             <tr>
                 <td>{{ post.title }}</td>
@@ -28,6 +32,7 @@ Search
                 <td>{{ post.text|truncatechars:20|censor }}</td>
             </tr>
             {% endfor %}
+            {% endcache %}
         </table>
     {% else %}
         <h2>Публикаций нет</h2>
