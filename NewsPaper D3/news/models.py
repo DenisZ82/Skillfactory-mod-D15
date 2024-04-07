@@ -3,6 +3,9 @@ from django.contrib.auth.models import User
 from django.db.models import Sum
 from django.db.models.functions import Coalesce
 from django.urls import reverse
+# D14
+from django.utils.translation import gettext as _
+from django.utils.translation import pgettext_lazy  # импортируем «ленивый» геттекст с подсказкой
 
 
 class Author(models.Model):
@@ -22,7 +25,7 @@ class Author(models.Model):
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=80, unique=True)
+    name = models.CharField(max_length=80, unique=True, help_text=_('category name'))
 
     # def __str__(self):
     #     return f'{self.name}'
@@ -31,8 +34,19 @@ class Category(models.Model):
         return self.name.title()
 
 
+# пример перевода в модели
+# class MyModel(models.Model):
+#     name = models.CharField(max_length=100)
+#     kind = models.ForeignKey(
+#         Category,
+#         on_delete=models.CASCADE,
+#         related_name='kinds',
+#         verbose_name=pgettext_lazy('help text for MyModel model', 'This is the help text'),
+#     )
+
+
 class Post(models.Model):
-    article = 'AR'
+    article = 'AR' or 'Статья'
     news = 'NE'
     CATEGORY_MATERIAL = [
         (article, 'Статья'),

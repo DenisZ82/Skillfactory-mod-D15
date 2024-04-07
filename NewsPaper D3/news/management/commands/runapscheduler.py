@@ -11,18 +11,18 @@ from django.template.loader import render_to_string
 from django_apscheduler import util
 from django_apscheduler.jobstores import DjangoJobStore
 from django_apscheduler.models import DjangoJobExecution
-
+from django.utils import timezone
 from news.models import Post, Category, Subscription
 
 logger = logging.getLogger(__name__)
 
 
 def my_job():
-    today = datetime.datetime.now()
+    today = timezone.now()
     last_week = today - datetime.timedelta(days=7)
     new_posts = Post.objects.filter(time_in__gte=last_week)
     categories = set(new_posts.values_list('category_post_many__name', flat=True))
-    subscribers = set(User.objects.filter(subscriptions__category__in=categories).values_list('email', flat=True))
+    subscribers = set(User.objects.filter(subscriptions__category__name__in=categories).values_list('email', flat=True))
 
     html_content = render_to_string(
         'daily_post.html',
@@ -68,7 +68,7 @@ class Command(BaseCommand):
 
         scheduler.add_job(
             my_job,
-            trigger=CronTrigger(second="*/10"),  # ay_of_week='fri', hour='18', minute='00'
+            trigger=CronTrigger(day_of_week='fri', hour='18', minute='00'),  # second="*/10"
             id="my_job",  # The `id` assigned to each job MUST be unique
             max_instances=1,
             replace_existing=True,

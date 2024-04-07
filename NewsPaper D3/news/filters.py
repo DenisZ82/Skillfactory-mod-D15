@@ -2,17 +2,19 @@ from django_filters import FilterSet, DateTimeFilter, ModelMultipleChoiceFilter,
 import django_filters
 from django.forms import DateTimeInput
 from .models import Post, Category, PostCategory
+from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 
 class PostFilter(FilterSet):
     title = django_filters.CharFilter(
         field_name='title',
         lookup_expr='icontains',
-        label='Заголовок',
+        label=_('Заголовок'),
     )
 
     added_after = DateTimeFilter(
-        label='Дата публикации после',
+        label=_('Дата публикации после'),
         field_name='time_in',
         lookup_expr='gt',
         widget=DateTimeInput(
@@ -24,7 +26,7 @@ class PostFilter(FilterSet):
     category = ModelMultipleChoiceFilter(
         field_name='category_post_many__name',
         queryset=Category.objects.all(),
-        label='Категории публикации',
+        label=_('Категории публикации'),
     )
 
     # class Meta:
