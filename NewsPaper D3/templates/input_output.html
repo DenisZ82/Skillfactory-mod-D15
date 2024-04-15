@@ -1,12 +1,8 @@
-{% load i18n %} <!-- Загружаем теги с переводами, без этой строки ничего не будет работать -->
-{% load tz %} <!-- не забываем загрузить тег для работы с часовыми поясами -->
+{% load i18n %}
+{% load tz %}
 
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Page title</title>
     <style>
         body {background-color: {% if current_time.hour >= 19 or current_time.hour <= 7 %} darkcyan {% else %} powderblue {% endif %};}
     </style>
@@ -41,9 +37,7 @@
     </form>
 
     {{ TIME_ZONE }}
-    {{ current_time|timezone:TIME_ZONE }} <!-- Отображаем время в выбранном часовом поясе  -->
+    {{ time_now|timezone:TIME_ZONE }} <!-- Отображаем время в выбранном часовом поясе  -->
 
-    <!-- {{ string }}  --> <!-- Это уже знакомая нам переменная, просто засунули её в шаблон -->
-    <!-- {% trans "Check out my new cool translation" %}! --> <!-- Переводим строку -->
 </body>
 </html>

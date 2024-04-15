@@ -50,7 +50,8 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.yandex',
     'django_apscheduler',
-    'django_dump_load_utf8'
+    'django_dump_load_utf8',
+    'rest_framework'
 ]
 
 SITE_ID = 1

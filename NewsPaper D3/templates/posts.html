@@ -10,8 +10,15 @@
 Posts
 {% endblock title %}
 
+<!-- {% include 'input_output.html' %} -->
+
 {% block content %}
     {% trans "Найти" as search %}
+    <!-- Если сейчас больше чем 19 или же меньше 7, то выводим тёмную тему, иначе выводим светлую -->
+    <style>
+        body {background-color: {% if current_time.hour >= 19 or current_time.hour <= 7 %} darkcyan {% else %} powderblue {% endif %};}
+    </style>
+
     <form action="{% url 'set_language' %}" method="POST"> {% csrf_token %} <!-- Не забываем по csrf_token
     для POST запросов -->
         <input type="hidden" name="next" value="{{ redirect_to }}">
@@ -41,7 +48,7 @@ Posts
     </form>
 
     {{ TIME_ZONE }}
-    {{ current_time|timezone:TIME_ZONE }} <!-- Отображаем время в выбранном часовом поясе  -->
+    {{ time_now|timezone:TIME_ZONE }} <!-- Отображаем время в выбранном часовом поясе  -->
 
     <h1>{% trans "Все публикации" %}</h1>
     <h3>{{ time_now|date:'d M Y' }}</h3>
