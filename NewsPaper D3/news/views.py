@@ -16,9 +16,14 @@ from django.views.decorators.csrf import csrf_protect
 from .models import Subscription, Category
 # D14
 from django.utils.translation import gettext as _  # импортируем функцию для перевода
-# from django.utils.translation import activate, get_supported_language_variant, LANGUAGE_SESSION_KEY
+
 from django.utils import timezone
 import pytz  # импортируем стандартный модуль для работы с часовыми поясами
+
+from rest_framework import viewsets
+from rest_framework import permissions
+
+from .serializers import *
 
 
 class PostList(ListView):
@@ -193,7 +198,6 @@ def subscriptions(request):
 #             'string': string
 #         }
 #
-#         curent_time = timezone.now()
 #
 #         return HttpResponse(render(request, 'index.html', context))
 
@@ -215,4 +219,29 @@ class Index(View):
     #  который и будет обрабатываться написанным нами ранее middleware
     def post(self, request):
         request.session['django_timezone'] = request.POST['timezone']
-        return redirect('/')
+        return redirect('/news/hello')
+
+
+class AuthorViewset(viewsets.ModelViewSet):
+    queryset = Author.objects.all()
+    serializer_class = AuthorSerializer
+
+
+class CategoryViewset(viewsets.ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
+
+class PostViewset(viewsets.ModelViewSet):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+
+
+class PostCatViewset(viewsets.ModelViewSet):
+    queryset = PostCategory.objects.all()
+    serializer_class = PostCatSerializer
+
+
+class CommentViewest(viewsets.ModelViewSet):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer

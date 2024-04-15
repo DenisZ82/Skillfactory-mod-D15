@@ -34,7 +34,7 @@ class Category(models.Model):
         return self.name.title()
 
 
-# пример перевода в модели
+# абстрактный пример перевода в модели
 # class MyModel(models.Model):
 #     name = models.CharField(max_length=100)
 #     kind = models.ForeignKey(
